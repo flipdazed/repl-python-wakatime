@@ -4,16 +4,15 @@
 
 from typing import Any, Dict, Tuple, List, Optional, Callable
 
-from IPython.terminal.interactiveshell import TerminalInteractiveShell
 from IPython.terminal.prompts import ClassicPrompts, Prompts
-from pygments.token import _TokenType
+from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from pygments.token import Token, _TokenType
 from traitlets.config.loader import Config, LazyConfigValue
 
 from .hooks.wakatime import wakatime_hook
 
 
 def get_new_prompts_class(
-    prompts_class: Any,
     hook: Callable = wakatime_hook,
     args: Tuple = (),
     kwargs: Optional[Dict[str, Any]] = None,
@@ -32,22 +31,24 @@ def get_new_prompts_class(
     """
     if kwargs is None:
         kwargs = {}
-    if isinstance(prompts_class, LazyConfigValue):
-        prompts_class = ClassicPrompts
-    shell = TerminalInteractiveShell()
 
     class Ps(Prompts):
         """Ps."""
 
-        def in_prompt_tokens(self) -> list[tuple[_TokenType, str]]:
+        def in_prompt_tokens(self) -> List[Tuple[_TokenType, str]]:
             """In prompt tokens.
 
             :rtype: list[tuple[_TokenType, str]]
             """
-            return prompts_class(shell).in_prompt_tokens()
+            return [
+                (Token.Prompt, self.vi_mode() ),
+                (Token.Prompt, 'In ['),
+                (Token.PromptNum, str(self.shell.execution_count)),
+                (Token.Prompt, ']: '),
+            ]
 
         def continuation_prompt_tokens(
-            self, width: int | None = None
+            self, width: Optional[int] = None
         ) -> List[Tuple[_TokenType, str]]:
             """Continuation prompt tokens.
 
@@ -55,22 +56,33 @@ def get_new_prompts_class(
             :type width: int | None
             :rtype: list[tuple[_TokenType, str]]
             """
-            return prompts_class(shell).continuation_prompt_tokens(width)
+            if width is None:
+                width = self._width()
+            return [
+                (Token.Prompt, (' ' * (width - 5)) + '...: '),
+            ]
 
-        def rewrite_prompt_tokens(self) -> list[tuple[_TokenType, str]]:
+        def rewrite_prompt_tokens(self) -> List[Tuple[_TokenType, str]]:
             """Rewrite prompt tokens.
 
             :rtype: list[tuple[_TokenType, str]]
             """
-            return prompts_class(shell).rewrite_prompt_tokens()
+            width = self._width()
+            return [
+                (Token.Prompt, ('-' * (width - 2)) + '> '),
+            ]
 
-        def out_prompt_tokens(self) -> list[tuple[_TokenType, str]]:
+        def out_prompt_tokens(self) -> List[Tuple[_TokenType, str]]:
             """Out prompt tokens.
 
             :rtype: list[tuple[_TokenType, str]]
             """
             hook(*args, **kwargs)
-            return prompts_class(shell).out_prompt_tokens()
+            return [
+                (Token.OutPrompt, 'Out['),
+                (Token.OutPromptNum, str(self.shell.execution_count)),
+                (Token.OutPrompt, ']: '),
+            ]
 
     return Ps
 
@@ -96,7 +108,6 @@ def install_hook(
     if kwargs is None:
         kwargs = {"plugin": "repl-ipython-wakatime"}
     c.TerminalInteractiveShell.prompts_class = get_new_prompts_class(  # type: ignore
-        c.TerminalInteractiveShell.prompts_class,
         hook,
         args,
         kwargs,  # type: ignore

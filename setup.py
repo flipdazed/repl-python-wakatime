@@ -5,6 +5,7 @@ setup(
     description="Python REPL plugin for automatic time tracking and metrics generated from your programming activity",
     author="Wu Zhenyu",
     author_email="wuzhenyu@ustc.edu",
+    version="0.0.12",
     url="https://repl-python-wakatime.readthedocs.io",
     project_urls={
         "Homepage": "https://repl-python-wakatime.readthedocs.io",
@@ -52,11 +53,5 @@ setup(
         "ptpython": [line.strip() for line in open("requirements/ptpython.txt").readlines()],
     },
     include_package_data=True,
-    zip_safe=False,
-    entry_points={
-        # Define entry points if needed
-        # "console_scripts": [
-        #     "script_name = module:function",
-        # ],
-    },
+    zip_safe=False
 )

@@ -3,9 +3,8 @@
 """
 
 import os
-from collections.abc import Callable
 
-from typing import List, Union
+from typing import List, Union, Callable
 
 def get_project(
     filenames: Union[List[str], None] = None,
