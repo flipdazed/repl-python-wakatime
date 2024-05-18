@@ -5,9 +5,10 @@
 import os
 from collections.abc import Callable
 
+from typing import List, Union
 
 def get_project(
-    filenames: list[str] | None = None,
+    filenames: Union[List[str], None] = None,
     detect_func: Callable[[str], bool] = os.path.isdir,
 ) -> str:
     """Get project. Its function is like ``git rev-parse --show-toplevel``.

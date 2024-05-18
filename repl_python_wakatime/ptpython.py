@@ -2,8 +2,7 @@
 ===========
 """
 
-from collections.abc import Callable
-from typing import Any
+from typing import Any, Callable
 
 from prompt_toolkit.formatted_text import AnyFormattedText
 from ptpython.prompt_style import PromptStyle

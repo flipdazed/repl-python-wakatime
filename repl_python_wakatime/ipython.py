@@ -2,8 +2,7 @@
 ==========
 """
 
-from collections.abc import Callable
-from typing import Any
+from typing import Any, Dict, Tuple, List, Optional, Callable
 
 from IPython.terminal.interactiveshell import TerminalInteractiveShell
 from IPython.terminal.prompts import ClassicPrompts, Prompts
@@ -14,11 +13,11 @@ from .hooks.wakatime import wakatime_hook
 
 
 def get_new_prompts_class(
-    prompts_class: type,
+    prompts_class: Any,
     hook: Callable = wakatime_hook,
-    args: tuple = (),
-    kwargs: dict[str, Any] | None = None,
-) -> type:
+    args: Tuple = (),
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> Any:
     """Get new prompts class.
 
     :param prompts_class:
@@ -49,7 +48,7 @@ def get_new_prompts_class(
 
         def continuation_prompt_tokens(
             self, width: int | None = None
-        ) -> list[tuple[_TokenType, str]]:
+        ) -> List[Tuple[_TokenType, str]]:
             """Continuation prompt tokens.
 
             :param width:
@@ -79,8 +78,8 @@ def get_new_prompts_class(
 def install_hook(
     c: Config,
     hook: Callable = wakatime_hook,
-    args: tuple = (),
-    kwargs: dict[str, Any] | None = None,
+    args: Tuple = (),
+    kwargs: Optional[Dict[str, Any]] = None,
 ) -> Config:
     """Install hook.
 
