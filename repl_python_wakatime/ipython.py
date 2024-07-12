@@ -9,7 +9,7 @@ from IPython.terminal.interactiveshell import TerminalInteractiveShell
 from pygments.token import Token, _TokenType
 from traitlets.config.loader import Config, LazyConfigValue
 
-from .hooks.wakatime import wakatime_hook
+from repl_python_wakatime.hooks.wakatime import wakatime_hook
 
 
 def get_new_prompts_class(
